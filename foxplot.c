@@ -4,15 +4,14 @@
 # include <math.h>
 # include <string.h>
 
-const int len_alphabet = 26;
+# define LEN_ALPHABET 26
+
 char* alphabet = "abcdefghijklmnopqrstuvwxyz";
 
 /* Initialise arrays to all 0 */
-int counts[26] = {};
-float proportions[26] = {};
-int rounded_proportions[26] = {};
-
-//char* histogram[];
+int counts[LEN_ALPHABET] = {};
+float proportions[LEN_ALPHABET] = {};
+int rounded_proportions[LEN_ALPHABET] = {};
 
 void update_counts(int counts[], int i)
 {
@@ -21,7 +20,7 @@ void update_counts(int counts[], int i)
 
 void print_counts(int counts[])
 {
-    for (int i = 0; i < len_alphabet; i++)
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         printf("Character %c has count %d \n", alphabet[i], counts[i]);
     }
@@ -31,33 +30,28 @@ int compare_chars(char c, char* alphabet)
 {
     for (int i = 0; alphabet[i]; i++)
     {
-        /* printf("Alphabet[i] is: %c \n", alphabet[i]); */
         if (c == alphabet[i])
         {
-            /*printf("Character %c is in alphabet \n", c);*/
             update_counts(counts, i);
             return 1;
         }
-        /*printf("Character %c is not in alphabet \n", c);*/
     }
     return 0;
 }
 
 void calculate_proportions(int counts[], float proportions[], int num_letters)
 {
-    for (int i = 0; i < len_alphabet; i++)
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         float count = (float) counts[i];
-        //printf("count: %f", count);
         float prop = (count / (float) num_letters) * 100;
-        //printf("prop: %f", prop);
         proportions[i] = prop;
     }
 }
 
 void print_proportions(float proportions[])
 {
-    for (int i = 0; i < len_alphabet; i++)
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         printf("Character %c has proportion %0.2f%% \n", alphabet[i], proportions[i]);
     }
@@ -65,7 +59,7 @@ void print_proportions(float proportions[])
 
 void round_proportions(float proportions[], int rounded_proportions[])
 {
-    for (int i = 0; i < len_alphabet; i++)
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         int rounded_prop = round(proportions[i]);
         rounded_proportions[i] = rounded_prop;
@@ -74,24 +68,37 @@ void round_proportions(float proportions[], int rounded_proportions[])
 
 void print_rounded_proportions(int rounded_proportions[])
 {
-    for (int i = 0; i < len_alphabet; i++)
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         printf("Character %c has rounded proportion %d%% \n", alphabet[i], rounded_proportions[i]);
     }
 }
 
-int max_rounded_proportion(int rounded_porportions[])
+struct Popular
+{
+    int max_prop;
+    char most_pop;
+};
+
+struct Popular most_popular;
+struct Popular* popular_pointer = &most_popular;
+
+struct Popular* max_rounded_proportion(int rounded_porportions[], char* alphabet, struct Popular* popular_pointer)
 {
     int max = 0;
-    for (int i = 0; i < len_alphabet; i++)
+    char most_popular = ' ';
+    for (int i = 0; i < LEN_ALPHABET; i++)
     {
         int elem = rounded_proportions[i];
         if (elem > max)
         {
             max = elem;
+            most_popular = alphabet[i];
         }
     }
-    return max;
+    popular_pointer->max_prop = max;
+    popular_pointer->most_pop = most_popular;
+    return popular_pointer;
 }
 
 void generate_histogram(char* alphabet, int max)
@@ -99,15 +106,11 @@ void generate_histogram(char* alphabet, int max)
     // Each row of the histogram
     for (int i = max; i > 0; i--)
     {
-        //char char_i = (char) i;
-        //char row[] = {char_i};
         char row[27] = "                          ";
-        
         // Each element of that row
-        for (int j = 0; j < len_alphabet; j++)
+        for (int j = 0; j < LEN_ALPHABET; j++)
         {
             char c = alphabet[j];
-            //char space = ' ';
             if (i <= rounded_proportions[j])
             {
                 // Add a letter character to the row
@@ -119,40 +122,28 @@ void generate_histogram(char* alphabet, int max)
             }
         }
         printf("%s\n", row);
-        //histogram[i] = row;
     }
 }
-
-/*
-void print_histogram(char* histogram[], int max)
-{
-    for (int i = 0; i < max; i++)
-    {
-        printf("%s \n", histogram[i]);
-    }
-}
-*/
 
 int main(int argc, char* argv[])
 {
 
     if (argc == 1)
     {
-        printf("Feed me a string or a txt file. \n");
+        printf("Why not feed me a string? I don't bite. \n");
         exit(0);
     }
     if (argc > 2)
     {
-        printf("Just one string or txt file please. \n");
+        printf("Just one string at a time please. I'm only a little fox. \n");
         exit(0);
     }
 
-    /* Read string to analyse from command line args */
+    printf("\nMmm, that's some tasty text! \n");
+    
+    // Read string to analyse from command line args
     char* str = argv[1];
-    printf("%s", str);
     int num_letters = 0;
-
-    /*print_counts(counts);*/
 
     for (int i = 0; str[i]; i++)
     {
@@ -163,30 +154,27 @@ int main(int argc, char* argv[])
         {
             num_letters += 1;
         }
-        /*printf("Counted number of letters in string is: %d \n", num_letters);*/
     }
 
-    /*print_counts(counts);*/
-    printf("Number of letters in string is: %d \n", num_letters);
+    printf("\nSo many letters. I taste... %d of them. \n", num_letters);
+    
     calculate_proportions(counts, proportions, num_letters);
-    print_proportions(proportions);
-
-    /*
-    float total_prop = 0;
-    for (int i = 0; i < len_alphabet; i++)
-    {
-        total_prop += proportions[i];
-    }
-    printf("total prop: %f", total_prop);
-    */
-      
     round_proportions(proportions, rounded_proportions);
-    //print_rounded_proportions(rounded_proportions);
-    int max = max_rounded_proportion(rounded_proportions);
-    printf("Max rounded prop: %d \n", max);
-    printf("HISTOGRAM: \n");
+    
+    struct Popular* popular_char = max_rounded_proportion(rounded_proportions, alphabet, popular_pointer);
+    int max = popular_char->max_prop;
+    char most_popular = popular_char->most_pop;
+    
+    printf("\nHere's your letter popularity histogram. \n");
+    printf("BUUUURP \n");    
+    
+    printf("\n");
     generate_histogram(alphabet, max);
-    //print_histogram(histogram, max);
+    
+    printf("\nLooks like '%c' is the most popular! \n", most_popular);
+    
+    printf("\nDo stop by and feed me again sometime. \n");
+    printf("\n");
 
     return 0;
 
