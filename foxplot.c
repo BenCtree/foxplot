@@ -1,3 +1,6 @@
+// foxplot.c
+// Ben Crabtree, 2021
+
 # include <stdio.h>
 # include <ctype.h>
 # include <stdlib.h>
