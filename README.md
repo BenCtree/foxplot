@@ -8,11 +8,11 @@ $ gcc foxplot.c -o foxplot
 
 Then to run, type:
 
-$ .\foxplot "My string goes here!"
+$ ./foxplot "My string goes here!"
 
 For example, if you were to run:
 
-$ .\foxplot "The quick brown fox jumps over the lazy dog."
+$ ./foxplot "The quick brown fox jumps over the lazy dog."
 
 You would see:
 
